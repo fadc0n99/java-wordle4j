@@ -38,5 +38,4 @@ public class WordleDictionaryLoader {
     private static String formatWord(String word) {
         return word.toLowerCase().replace("ё", "е");
     }
-
 }
