@@ -13,7 +13,9 @@ public class Logger {
 
     private static final String LOG_FILENAME = "wordle.log";
 
-    private Logger() {}
+    private Logger() {
+
+    }
 
     public static void write(String message) {
         createFileIfNotExist(Paths.get(LOG_FILENAME));
