@@ -15,7 +15,6 @@ import ru.yandex.practicum.exceptions.*;
  */
 public class Wordle {
 
-
     public static final String DICTIONARY_FILENAME = "words_ru.txt";
     public static final int MAX_ATTEMPTS = 6;
     public static final int LENGTH_WORD = 5;
@@ -34,7 +33,7 @@ public class Wordle {
     public static void startWordle() {
         wordleGame.initAnswer();
 
-        while(true) {
+        while (true) {
             System.out.println("Попытка " + wordleGame.getCurrentStep() + ". Введите слово, либо нажмите [ENTER] для подсказки:");
             String suggestion = formatWord(scanner.nextLine());
             if (!isOnlyCyrillicLetters(suggestion)) {
