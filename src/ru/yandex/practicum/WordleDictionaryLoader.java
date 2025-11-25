@@ -14,7 +14,9 @@ import java.util.List;
  */
 public class WordleDictionaryLoader {
 
-    private WordleDictionaryLoader() {}
+    private WordleDictionaryLoader() {
+
+    }
 
     public static WordleDictionary loadWordsFromFile(String fromFile) {
         List<String> words = new ArrayList<>();
