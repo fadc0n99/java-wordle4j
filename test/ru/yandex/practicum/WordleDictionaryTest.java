@@ -13,12 +13,11 @@ class WordleDictionaryTest {
 
         WordleDictionary dictionary = new WordleDictionary(words);
 
-        List<String> inputWords = List.of("apple");
         List<Character> notPresentSymbols = List.of('e', 'a');
         Map<Character, Set<Integer>> wrongPositionSymbols = new HashMap<>();
         Map<Character, Set<Integer>> correctPositionSymbols = new HashMap<>();
         String suitable =
-                dictionary.getSuitableWord(inputWords, notPresentSymbols, wrongPositionSymbols, correctPositionSymbols);
+                dictionary.getSuitableWord(notPresentSymbols, wrongPositionSymbols, correctPositionSymbols);
 
         assertNotEquals("apple", suitable);
         assertEquals("word", suitable);
@@ -30,7 +29,6 @@ class WordleDictionaryTest {
 
         WordleDictionary dictionary = new WordleDictionary(words);
 
-        List<String> inputWords = List.of("apple");
         List<Character> notPresentSymbols = List.of('n', 'd');
         Map<Character, Set<Integer>> wrongPositionSymbols = new HashMap<>();
         Map<Character, Set<Integer>> correctPositionSymbols = new HashMap<>();
@@ -39,7 +37,7 @@ class WordleDictionaryTest {
         wrongPositionSymbols.put('l', Set.of(3));
 
         String suitable =
-                dictionary.getSuitableWord(inputWords, notPresentSymbols, wrongPositionSymbols, correctPositionSymbols);
+                dictionary.getSuitableWord(notPresentSymbols, wrongPositionSymbols, correctPositionSymbols);
 
         assertNotEquals("crane", suitable);
         assertEquals("place", suitable);
@@ -47,11 +45,10 @@ class WordleDictionaryTest {
 
     @Test
     void testGetSuitableWord_filtersByCorrectPositionSymbols() throws Exception {
-        List<String> words = List.of("apple", "bread", "crane", "word", "place", "apace", "agpie");
+        List<String> words = List.of("apace", "agpie");
 
         WordleDictionary dictionary = new WordleDictionary(words);
 
-        List<String> inputWords = List.of("apple");
         List<Character> notPresentSymbols = List.of('n', 'd');
         Map<Character, Set<Integer>> wrongPositionSymbols = new HashMap<>();
         Map<Character, Set<Integer>> correctPositionSymbols = new HashMap<>();
@@ -63,11 +60,29 @@ class WordleDictionaryTest {
         wrongPositionSymbols.put('p', Set.of(2));
 
         String suitable =
-                dictionary.getSuitableWord(inputWords, notPresentSymbols, wrongPositionSymbols, correctPositionSymbols);
+                dictionary.getSuitableWord(notPresentSymbols, wrongPositionSymbols, correctPositionSymbols);
 
         assertNotEquals("agpie", suitable);
         assertEquals("apace", suitable);
     }
 
+    @Test
+    void testGetSuitableWord_shouldFindSuitableWordWithCorrectAndWrongPositionConstraints() throws Exception {
+        List<String> words = List.of("жабры", "парта");
 
+        WordleDictionary dictionary = new WordleDictionary(words);
+        Map<Character, Set<Integer>> wrongPositionSymbols = new HashMap<>();
+        Map<Character, Set<Integer>> correctPositionSymbols = new HashMap<>();
+
+        List<Character> notPresentSymbols = List.of('э');
+        wrongPositionSymbols.put('а', Set.of(1, 3));
+
+
+        String suitable =
+                dictionary.getSuitableWord(notPresentSymbols, wrongPositionSymbols, correctPositionSymbols);
+
+        assertNotEquals("жабры", suitable);
+        assertEquals("парта", suitable);
+
+    }
 }

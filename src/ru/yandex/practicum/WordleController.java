@@ -3,6 +3,7 @@ package ru.yandex.practicum;
 import java.nio.charset.StandardCharsets;
 import java.util.Scanner;
 import ru.yandex.practicum.exceptions.*;
+import ru.yandex.practicum.utils.WordValidator;
 
 /*
 в главном классе нам нужно:
@@ -13,30 +14,26 @@ import ru.yandex.practicum.exceptions.*;
     вызвать игровой метод в котором в цикле опрашивать пользователя и передавать информацию в игру
     вывести состояние игры и конечный результат
  */
-public class Wordle {
+public class WordleController {
 
-    public static final String DICTIONARY_FILENAME = "words_ru.txt";
-    public static final int MAX_ATTEMPTS = 6;
-    public static final int LENGTH_WORD = 5;
+    private final WordleGame wordleGame;
+    private final Scanner scanner;
 
-    public static final WordleDictionary dictionary =
-            WordleDictionaryLoader.loadWordsFromFile(DICTIONARY_FILENAME);
-    public static final WordleGame wordleGame = new WordleGame(dictionary, MAX_ATTEMPTS, LENGTH_WORD);
-    public static final Scanner scanner = new Scanner(System.in, StandardCharsets.UTF_8);
-
-    public static void main(String[] args) {
-        Logger.write("Начать игру");
-        startWordle();
-        Logger.write("Закончить игру");
+    public WordleController(String wordsFileName, int attempts, int lengthWord)
+            throws WordsFileNotFoundException, WordsFileLoadException {
+        WordleDictionary dictionary = WordleDictionaryLoader.loadWordsFromFile(wordsFileName, lengthWord);
+        wordleGame = new WordleGame(dictionary, attempts, lengthWord);
+        scanner = new Scanner(System.in, StandardCharsets.UTF_8);
     }
 
-    public static void startWordle() {
+    public void start() {
+        Logger.write("Начать игру");
         wordleGame.initAnswer();
 
         while (true) {
             System.out.println("Попытка " + wordleGame.getCurrentStep() + ". Введите слово, либо нажмите [ENTER] для подсказки:");
-            String suggestion = formatWord(scanner.nextLine());
-            if (!isOnlyCyrillicLetters(suggestion)) {
+            String suggestion = WordValidator.formatWord(scanner.nextLine());
+            if (!WordValidator.isOnlyCyrillicLetters(suggestion)) {
                 System.out.println("В введенном слове допускается только кириллица");
                 continue;
             }
@@ -67,27 +64,14 @@ public class Wordle {
             } catch (WordNotFoundInDictionaryException e) {
                 Logger.write(e.getMessage());
                 System.out.println("Слово не найдено");
-            } catch (WordLengthTooLongException | WordLengthTooShortException e) {
+            } catch (InvalidWordLengthException e) {
                 Logger.write(e.getMessage());
                 System.out.println("Слово должно быть из 5 символов");
 
             }
         }
-    }
 
-    private static String formatWord(String word) {
-        return word.trim().replace('ё', 'е').toLowerCase();
-    }
-
-    private static boolean isOnlyCyrillicLetters(String word) {
-        String cyrillic = "абвгдежзийклмнопрстуфхцчшщъыьэюя";
-
-        for (String symbol : word.split("")) {
-            if (!cyrillic.contains(symbol)) {
-                return false;
-            }
-        }
-        return true;
+        Logger.write("Закончить игру");
     }
 
 }

@@ -23,20 +23,15 @@ public class WordleGame {
     private static final char SYMBOL_WRONG_POSITION = '^';
     private static final char SYMBOL_NOT_PRESENT = '-';
 
-    private final List<String> inputWords = new ArrayList<>();
     private final List<Character> notPresentSymbols = new ArrayList<>();
     private final Map<Character, Set<Integer>> correctPositionSymbols = new LinkedHashMap<>();
     private final Map<Character, Set<Integer>> wrongPositionSymbols = new LinkedHashMap<>();
 
     private String answer;
     private int currentStep = 1;
-    private int maxAttempts = 6;
-    private int lengthWord = 5;
+    private final int maxAttempts;
+    private final int lengthWord;
     private final WordleDictionary dictionary;
-
-    public WordleGame(WordleDictionary dictionary) {
-        this.dictionary = dictionary;
-    }
 
     public WordleGame(WordleDictionary dictionary, int maxAttempts, int lengthWord) {
         this.dictionary = dictionary;
@@ -62,14 +57,14 @@ public class WordleGame {
     }
 
     public boolean isValidAnswer(String userSuggestion)
-            throws WordNotFoundInDictionaryException, WordLengthTooShortException, WordLengthTooLongException {
+            throws WordNotFoundInDictionaryException, InvalidWordLengthException {
 
         if (userSuggestion.length() > lengthWord) {
-            throw new WordLengthTooLongException(
+            throw new InvalidWordLengthException(
                     String.format("В слове \"%s\" больше %d символов. Пропуск хода", userSuggestion, lengthWord));
         }
         if (userSuggestion.length() < lengthWord) {
-            throw new WordLengthTooShortException(
+            throw new InvalidWordLengthException(
                     String.format("В слове \"%s\" меньше %d символов. Пропуск хода", userSuggestion, lengthWord));
         }
         if (!dictionary.isExistWord(userSuggestion)) {
@@ -84,9 +79,6 @@ public class WordleGame {
     public String takeStep(String suggestion) {
         String maskedAnswer = maskSymbols(suggestion);
 
-        if (!inputWords.contains(suggestion)) {
-            inputWords.add(suggestion);
-        }
         currentStep++;
 
         return maskedAnswer;
@@ -114,7 +106,7 @@ public class WordleGame {
 
     public String searchHintWord() throws NotFoundSuitableWordException {
         return dictionary.getSuitableWord(
-                inputWords, notPresentSymbols, wrongPositionSymbols, correctPositionSymbols);
+                notPresentSymbols, wrongPositionSymbols, correctPositionSymbols);
     }
 
 }

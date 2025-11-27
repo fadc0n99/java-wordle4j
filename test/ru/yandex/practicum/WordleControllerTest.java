@@ -30,7 +30,7 @@ class FakeDictionary extends WordleDictionary {
     }
 
     @Override
-    public String getSuitableWord(List<String> inputWords, List<Character> notPresentSymbols,
+    public String getSuitableWord(List<Character> notPresentSymbols,
                                   Map<Character, Set<Integer>> wrongPositionSymbols,
                                   Map<Character, Set<Integer>> correctPositionSymbols) {
         // Для простоты возвращаем фиксированное слово
@@ -38,7 +38,7 @@ class FakeDictionary extends WordleDictionary {
     }
 }
 
-class WordleTest {
+class WordleControllerTest {
 
     public static List<String> words;
     public static WordleGame game;

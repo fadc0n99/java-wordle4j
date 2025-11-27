@@ -27,11 +27,12 @@ public class WordleDictionary {
         return words.contains(word);
     }
 
-    public String getSuitableWord(
-            List<String> inputWords, List<Character> notPresentSymbols,
-            Map<Character, Set<Integer>> wrongPositionSymbols, Map<Character, Set<Integer>> correctPositionSymbols) throws NotFoundSuitableWordException {
+    public String getSuitableWord(List<Character> notPresentSymbols,
+                                  Map<Character, Set<Integer>> wrongPositionSymbols,
+                                  Map<Character, Set<Integer>> correctPositionSymbols)
+            throws NotFoundSuitableWordException {
 
-        List<String> filteredWords = filterWords(inputWords, notPresentSymbols);
+        List<String> filteredWords = getWordsWithoutSymbols(notPresentSymbols);
 
         Collections.shuffle(filteredWords);
 
@@ -49,30 +50,28 @@ public class WordleDictionary {
         }
     }
 
-    private List<String> filterWords(List<String> inputWords, List<Character> notPresentSymbols) {
+    private List<String> getWordsWithoutSymbols(List<Character> notPresentSymbols) {
         return words.stream()
-                .filter(word -> !inputWords.contains(word))
                 .filter(word -> notPresentSymbols.stream().noneMatch(l -> word.contains(l.toString())))
                 .collect(Collectors.toList());
     }
 
-    private boolean containsSymbolsAnotherPosition(
-            String word, Map<Character, Set<Integer>> wrongPositionSymbols) {
-        boolean wordContainsAllWrongPositionSymbols =
-                wrongPositionSymbols.keySet().stream().allMatch(symbol -> word.contains(symbol.toString()));
+    private boolean containsSymbolsAnotherPosition(String word, Map<Character, Set<Integer>> wrongPositionSymbols) {
+        if (wrongPositionSymbols.isEmpty()) return true;
 
-        if (wordContainsAllWrongPositionSymbols) {
-            char[] symbols = word.toCharArray();
+        for (Map.Entry<Character, Set<Integer>> symbolEntry : wrongPositionSymbols.entrySet()) {
+            boolean symbolContainsAllowedPosition = false;
 
-            for (Map.Entry<Character, Set<Integer>> symbolEntry : wrongPositionSymbols.entrySet()) {
-                for (int i = 0; i < symbols.length; i++) {
-                    if (symbols[i] == symbolEntry.getKey() && symbolEntry.getValue().contains(i)) {
-                        return false;
-                    }
+            for (int i = 0; i < word.length(); i++) {
+                if (word.charAt(i) == symbolEntry.getKey() && !symbolEntry.getValue().contains(i)) {
+                    symbolContainsAllowedPosition = true;
+                    break;
                 }
             }
-        } else {
-            return false;
+
+            if (!symbolContainsAllowedPosition) {
+                return false;
+            }
         }
 
         return true;
